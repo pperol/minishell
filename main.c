@@ -13,6 +13,39 @@
 #include "minishell.h"
 
 /*
+1. 	Reads its input from a file (see Shell Scripts), from a string supplied 
+	as an argument to the -c invocation option (see Invoking Bash), or from 
+	the user’s terminal.
+	Main loop:
+	On commence par faire une boucle dans laquelle on lit STDIN 
+	Le programme affiche un prompt et stocke l’entrée de l’utilisateur 
+	en boucle. 
+	On envoie EOF (Ctrl+D) à minishell pour quitter.
+*/
+
+int	main()
+{
+	char	*buffer = NULL;
+	size_t	buf_size = 4096;
+
+	// alloc buffer qui stockera la commande entree par user
+	buffer = (char *)calloc(sizeof(char), buf_size);
+	if (buffer == NULL) {
+		perror("memory allocation failure");
+		return (EXIT_FAILURE);
+	}
+	// ecriture d'un prompt
+	write(1, "minishell$ ", 11);
+	// lecture de STDIN en boucle
+	while (getline(&buffer, &buf_size, stdin) > 0) {
+		printf("cmd = %s", buffer);
+		write(1, "minishell$ ", 11);
+	}
+	write(1, "exit \n", 6);
+	free(buffer);
+}
+
+/*
 
 2. 	Breaks the input into words and operators, obeying the quoting rules 
 	described in Quoting. These tokens are separated by metacharacters. 
@@ -33,41 +66,3 @@
 	status (see Exit Status).
 
 */
-
-/*
-1. 	Reads its input from a file (see Shell Scripts), from a string supplied 
-	as an argument to the -c invocation option (see Invoking Bash), or from 
-	the user’s terminal.
-	Boucle principale
-	On commence par faire une boucle dans laquelle on lit STDIN 
-	(la commande de l’user)
-*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-int	main()
-{
-	char	*buffer = NULL;
-	size_t	buf_size = 2048;
-
-	// alloc buffer qui stockera la commande entree par l'user
-	buffer = (char *)calloc(sizeof(char), buf_size);
-	if (buffer == NULL) {
-		perror("Malloc failure");
-		return (EXIT_FAILURE);
-	}
-
-	// ecriture d'un prompt
-	write(1, "$> ", 3);
-
-	// lecture de STDIN en boucle
-	while (getline(&buffer, &buf_size, stdin) > 0) {
-		printf("cmd = %s\n", buffer);
-		write(1, "$> ", 3);
-	}
-
-	printf("Bye \n");
-	free(buffer);
-}

@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 
-NAME = philo
+NAME = minishell
 
 SRC = 	main.c
 
@@ -21,14 +21,12 @@ INC = minishell.h
 
 CFLAGS = -Weverything
 
-LFLAGS = -valgrind -g
-
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) $(CFLAGS) $(LFLAGS) -o $(NAME)
+	$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
 
 %.o: %.c $(INC)
 	$(CC) $(CFLAGS) -c -o $@ $<
