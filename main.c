@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/03 19:03:42 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/03 21:10:44 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,104 @@ static void	ft_err_not_found(char *input)
 {
 		printf("minishell: command not found: %s\n", input);
 }
+
+// fonction qui va stocker la commande dans un char ** :
+
+static char	**split(char *raw_cmd, char *limit)
+{
+	char	*ptr = NULL;
+	char	**cmd = NULL;
+	size_t	idx = 0;
+
+	// split sur les espaces
+	ptr = strtok(raw_cmd, limit);
+
+	while (ptr) {
+		cmd = (char **)realloc(cmd, ((idx + 1) * sizeof(char *)));
+		cmd[idx] = strdup(ptr);
+		ptr = strtok(NULL, limit);
+		++idx;
+	}
+	// On alloue un element qu'on met a NULL a la fin du tableau
+	cmd = (char **)realloc(cmd, ((idx + 1) * sizeof(char *)));
+	cmd[idx] = NULL;
+	return (cmd);
+}
+
+static void	free_array(char **array)
+{
+	for (int i = 0; array[i]; i++) {
+		free(array[i]);
+		array[i] = NULL;
+	}
+	free(array);
+	array = NULL;
+}
+
+// execution :
+
+static void	exec_cmd(char **cmd)
+{
+	pid_t	pid = 0;
+	int		status = 0;
+
+	// On fork
+	pid = fork();
+	if (pid == -1)
+		perror("fork");
+	// Si le fork a reussit, le processus pere attend l'enfant (process fork)
+	else if (pid > 0) {
+		// On block le processus parent jusqu'a ce que l'enfant termine puis
+		// on kill le processus enfant
+		waitpid(pid, &status, 0);
+		kill(pid, SIGTERM);
+	} else {
+		// Le processus enfant execute la commande ou exit si execve echoue
+		if (execve(cmd[0], cmd, NULL) == -1)
+			perror("minishell");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/*
+/// Libft:
+La fonction strtok() scinde une chaîne en une séquence d'éléments lexicaux. 
+Lors du premier appel à strtok(), la chaîne à scinder doit être spécifiée dans str. 
+Dans chaque appel ultérieur fait pour analyser la même chaîne, str doit être NULL.
+L'argument delim spécifie l'ensemble des caractères qui délimitent les éléments 
+dans la chaîne à analyser. 
+La chaîne de séparateurs delimit peut être différente à chaque appel sur la même chaîne.
+Chaque appel à strtok() renvoie un pointeur sur une chaîne, terminée par un octet nul, 
+contenant l'élément suivant. 
+Cette chaîne n'inclut pas le séparateur. 
+S'il n'y a plus d'éléments, strtok renvoie NULL.
+Une séquence, dans la chaîne à analyser, de deux séparateurs contigus ou plus est considérée 
+comme un seul séparateur. 
+Les séparateurs en début et en fin de chaîne sont ignorés. 
+Les éléments renvoyés par strtok() sont toujours des chaînes non vides.
+strtok() renvoie un pointeur sur l'élément lexical suivant, ou NULL s'il n'y en a plus.  
+*/
+
+static char	*ft_strtok(char *str, const char *delim)
+{
+	char	*token;
+	
+	token = NULL;
+	if (str)
+		token = str;
+	if (!token)
+		return (NULL);
+	//while (*token && ft_strchr(delim, *token))
+	while (*token && strchr(delim, *token))
+		token++;
+	//while (token && !ft_strchr(delim, *token))
+	while (token && !strchr(delim, *token))
+		token++;
+	if (!*token)
+		return (NULL);
+	return (token);
+}
+
 
 int main(void) {
 	char*	input;
