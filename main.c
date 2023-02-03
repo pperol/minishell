@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/03 18:50:52 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/03 19:03:42 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,11 +122,11 @@ int main(void) {
 			}
 			else
 				ft_err_not_found(input);
-			// permet à l'utilisateur de naviguer avec les flèches haut et bas
+			// permet à l'utilisateur de naviguer avec les flèches haut et bas :
 			add_history(input);
 		}
 		ft_exit();
-		free(input);
+		//free(input);
 		return (0);
 	}
 }
