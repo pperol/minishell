@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/03 21:10:44 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/05 13:23:35 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	ft_exit(void)
 	write(1, "exit \n", 6);
 }
 
-static void	ft_err_not_found(char *input)
+void	ft_err_not_found(char *input)
 {
 		printf("minishell: command not found: %s\n", input);
 }
@@ -181,28 +181,136 @@ comme un seul séparateur.
 Les séparateurs en début et en fin de chaîne sont ignorés. 
 Les éléments renvoyés par strtok() sont toujours des chaînes non vides.
 strtok() renvoie un pointeur sur l'élément lexical suivant, ou NULL s'il n'y en a plus.  
+
+Cette fonction permet d'extraire, un à un, tous les éléments syntaxiques (les tokens) 
+d'une chaîne de caractères. 
+Pour contrôler ce qui doit être extrait, vous devez spécifier l'ensemble des caractères 
+pouvant faire office de séparateurs de tokens.
+
+Pour extraire tous les tokens, vous devez invoquer autant de fois que nécessaire la fonction 
+strtok. 
+Lors du premier appel vous devez passer la chaîne à découper ainsi que la liste des séparateurs. 
+En retour, vous récupérerez le premier token. 
+Ensuite, vous ne devrez plus repasser la chaîne à découper. 
+A la place, il faudra fournir un pointeur nul (NULL) et vous récupérerez le token suivant.
+
+l'utilisation de cette fonction peut s'avérer être dangereuse ! 
+Si vous l'utilisez, il faut savoir que :
+La chaîne de caractères à découper, ne doit pas être constante car elle est modifiée à 
+chaque appel à la fonction strtok.
+
+Comme nous venons de le dire, à la fin de l'extraction, vous ne pouvez plus exploiter 
+le contenu du premier paramètre car la chaîne d'origine a été altérée.
+
+La fonction strtok n'est pas « thread-safe ». 
+Cela veut dire qu'elle ne doit pas être utilisée en parallèle par plusieurs threads
+car elle utilise un unique pointeur vers la chaîne à découper pour les rappels 
+suivants (une variable locale statique).
+
+Paramètres
+string : la chaîne de caractères pour laquelle nous devons sortir la liste des éléments 
+syntaxiques (les tokens).
+delimiters : la liste des caractères de séparation à utiliser pour le découpage de la 
+chaîne principale.
+Valeur de retour
+Si un token est encore disponible, la fonction strtok renvoie ce nouveau token. 
+Dans le cas contraire, la fonction renvoi un pointeur nul (NULL).
+
+Exemple de code
+L'exemple de code suivant extrait tous les mots présents dans un chaîne de caractères initiale.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+int main() {
+
+    // La chaine de caractères à traiter.
+    char str[] = "- Voici une phrase avec quelques séparateurs ! -";
+    // La définitions de séparateurs connus.
+    const char * separators = " ,.-!";
+
+    // On cherche à récupérer, un à un, tous les mots (token) de la phrase
+    // et on commence par le premier.
+    char * strToken = strtok ( str, separators );
+    while ( strToken != NULL ) {
+        printf ( "%s\n", strToken );
+        // On demande le token suivant.
+        strToken = strtok ( NULL, separators );
+    }
+
+    return EXIT_SUCCESS;
+}
+Exemple d'utilisation de fonction strpbrk
+la variable strToken est pointeur vers le token en cours d'extraction. 
+En fait, on pointe bien à l'intérieur de la chaîne de caractères initiale. 
+Il ne faut donc surtout pas chercher à libérer la mémoire ciblée par strToken via 
+un appel à la fonction free.
+l'instruction char str[] = "- Voici une phrase avec quelques séparateurs ! -"; crée 
+une copie de la chaîne de caractères initiale et constante, dans la pile d'exécution 
+(la stack, en anglais). 
+Il ne faut surtout pas remplacer cette instruction par char * str = "- Voici une phrase 
+avec quelques séparateurs ! -"; : la zone de mémoire pointée serait constante et la 
+fonction strtok planterait systématiquement (« segmentation fault » sous Linux/Unix).
+Et voici le résultat produit par cet exemple :
+
+$> gcc -o sample sample.c
+$> ./sample
+Voici
+une
+phrase
+avec
+quelques
+séparateurs
+ulimit -v 2750; 
+$>
+
 */
 
-static char	*ft_strtok(char *str, const char *delim)
+char	*ft_strtok(char *str, const char *delim)
 {
-	char	*token;
+	char	*str_token;
 	
-	token = NULL;
+	str_token = NULL;
 	if (str)
-		token = str;
-	if (!token)
+		str_token = str;
+	if (!str_token)
 		return (NULL);
-	//while (*token && ft_strchr(delim, *token))
-	while (*token && strchr(delim, *token))
-		token++;
-	//while (token && !ft_strchr(delim, *token))
-	while (token && !strchr(delim, *token))
-		token++;
-	if (!*token)
+	//while (*str_token && ft_strchr(delim, *str_token))
+	while (*str_token && strchr(delim, *str_token))
+		str_token++;
+	//while (token && !ft_strchr(delim, *str_token))
+	while (str_token && !strchr(delim, *str_token))
+		str_token++;
+	if (!*str_token)
 		return (NULL);
-	return (token);
+	return (str_token);
 }
 
+/*
+enum TokenType {
+  // Single-character tokens.
+  LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
+  COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+
+  // One or two character tokens.
+  BANG, BANG_EQUAL,
+  EQUAL, EQUAL_EQUAL,
+  GREATER, GREATER_EQUAL,
+  LESS, LESS_EQUAL,
+
+  // Literals.
+  IDENTIFIER, STRING, NUMBER,
+
+  // Keywords.
+  AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
+  PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, EOF
+
+  else : "Error : unexpected characters"
+}
+
+Heredoc : à gérer dans un pipe.
+*/
 
 int main(void) {
 	char*	input;

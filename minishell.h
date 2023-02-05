@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pperol <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:57:21 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/02 11:14:00 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/05 13:23:11 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,18 @@
 # define UNCLOSED_QUOTES_ERR 7
 # define TAB_OR_SPC_ERR 8
 
+# define MEM_ALLOC_ERR "memory allocation failure"
+
 # define EXIT_CODE_NO_SUCH_FILE_OR_DIR 127
 # define EXIT_CODE_COMMAND_NOT_FOUND 127
 # define EXIT_CODE_CTRLC_HEREDOC 130
 
 #endif
+
+/* Utils */
+void	ft_prompt(void);
+void	ft_exit(void);
+void	ft_err_not_found(char *input);
+
+/* Libft */
+static char	*ft_strtok(char *str, const char *delim);

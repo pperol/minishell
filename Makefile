@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pperol <marvin@42.fr>                      +#+  +:+       +#+         #
+#    By: pperol <pperol@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/02 11:03:01 by pperol            #+#    #+#              #
-#    Updated: 2023/02/02 11:07:34 by pperol           ###   ########.fr        #
+#    Updated: 2023/02/02 18:39:48 by pperol           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,12 +21,16 @@ INC = minishell.h
 
 CFLAGS = -Weverything
 
+LFLAGS = -lreadline
+
+# valgrind --suppressions=cmd_valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --track-origins=yes --verbose --log-file=valgrind-out.txt ./minishell
+
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
+	$(CC) $(OBJ) $(CFLAGS) $(LFLAGS) -o $(NAME)
 
 %.o: %.c $(INC)
 	$(CC) $(CFLAGS) -c -o $@ $<
