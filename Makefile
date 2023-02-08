@@ -6,14 +6,14 @@
 #    By: pperol <pperol@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/02 11:03:01 by pperol            #+#    #+#              #
-#    Updated: 2023/02/02 18:39:48 by pperol           ###   ########.fr        #
+#    Updated: 2023/02/07 10:51:17 by pperol           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME = minishell
 
-SRC = 	main.c
+SRC = 	main.c ft_automate.c
 
 CC = clang
 

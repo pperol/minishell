@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:57:21 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/05 13:23:11 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/07 10:50:19 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # include <readline/history.h>
 //# include "libft.h"
 # include <signal.h>
+# include <string.h>
+
+# include <stdbool.h>
 # include <string.h>
 
 /** COLORS: **/
