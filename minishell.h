@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:57:21 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/07 10:50:19 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/09 15:49:02 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,23 @@
 # define EXIT_CODE_COMMAND_NOT_FOUND 127
 # define EXIT_CODE_CTRLC_HEREDOC 130
 
-#endif
+#define ALPHABET 256
+#define NOT_FOUND -1
+
+// Stocke les transitions de l'automate
+typedef struct s_transit {
+  int   to_state;
+  char  symbol;
+} t_transit;
+
+// Datas pour un automate fini complet
+typedef struct s_automaton {
+  int       num_states;
+  int       num_transitions;
+  int       initial_state;
+  int       *accepting_states;
+  t_transit ** transitions;
+} t_automat;
 
 /* Utils */
 void	ft_prompt(void);
@@ -75,4 +91,8 @@ void	ft_exit(void);
 void	ft_err_not_found(char *input);
 
 /* Libft */
-static char	*ft_strtok(char *str, const char *delim);
+char	*ft_strtok(char *str, const char *delim);
+
+/* Automate */
+
+#endif

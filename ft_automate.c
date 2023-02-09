@@ -1,72 +1,85 @@
 #include "minishell.h"
 
-#define ALPHABET_SIZE 26
-#define NOT_FOUND -1
+// Initialise l'automate fini complet
+t_automat *init_automat(int n_states, int n_transit, int init_st, int* accept_sts)
+{
+  t_automat *automaton;
+  int       i;
+  int       j;
 
-// Structure pour stocker les transitions de l'automate
-struct Transition {
-  int to_state;
-  char symbol;
-};
-
-// Structure pour stocker un automate fini complet
-struct CompleteAutomaton {
-  int num_states;
-  int num_transitions;
-  int initial_state;
-  int* accepting_states;
-  struct Transition** transitions;
-};
-
-// Fonction pour initialiser un automate fini complet
-struct CompleteAutomaton* init_complete_automaton(int num_states, int num_transitions, int initial_state, int* accepting_states) {
-  struct CompleteAutomaton* automaton = (struct CompleteAutomaton*)malloc(sizeof(struct CompleteAutomaton));
-  automaton->num_states = num_states;
-  automaton->num_transitions = num_transitions;
-  automaton->initial_state = initial_state;
-  automaton->accepting_states = accepting_states;
-  automaton->transitions = (struct Transition**)malloc(num_states * sizeof(struct Transition*));
-  for (int i = 0; i < num_states; i++) {
-    automaton->transitions[i] = (struct Transition*)malloc(ALPHABET_SIZE * sizeof(struct Transition));
-    for (int j = 0; j < ALPHABET_SIZE; j++) {
+  automaton = (t_automat *)malloc(sizeof(t_automat));
+  automaton->num_states = n_states;
+  automaton->num_transitions = n_transit;
+  automaton->initial_state = init_st;
+  automaton->accepting_states = accept_sts;
+  automaton->transitions = (t_transit **)malloc(n_states * sizeof(t_transit *));
+  i = 0;
+  while (i < n_states)
+  {
+    automaton->transitions[i] = (t_transit *)malloc(ALPHABET * sizeof(t_transit));
+    j = 0;
+    while (j < ALPHABET)
+    {
       automaton->transitions[i][j].to_state = NOT_FOUND;
+      j++;
     }
+    i++;
   }
-  return automaton;
+  return (automaton);
 }
 
-// Fonction pour ajouter une transition à un automate fini complet
-void add_transition(struct CompleteAutomaton* automaton, int from_state, int to_state, char symbol) {
-  int symbol_index = symbol - 'a';
+// Ajoute une transition à l'automate
+void add_transition(t_automat *automaton, int from_state, int to_state, char symbol) 
+{
+  int symbol_index;
+
+  symbol_index = symbol - 'a';
   automaton->transitions[from_state][symbol_index].to_state = to_state;
   automaton->transitions[from_state][symbol_index].symbol = symbol;
 }
 
-// Fonction pour vérifier si un mot est reconnu par un automate fini complet
-bool recognize(struct CompleteAutomaton* automaton, char* word) {
-  int state = automaton->initial_state;
-  int word_len = strlen(word);
-  for (int i = 0; i < word_len; i++) {
-    int symbol_index = word[i] - 'a';
+// Vérifie si un mot est reconnu par l'automate
+bool recognize(t_automat *automaton, char* word) 
+{
+  int state;
+  int word_len;
+  int symbol_index;
+  int i;
+
+  state = automaton->initial_state;
+  //word_len = ft_strlen(word);
+  word_len = strlen(word);
+  i = 0;
+  while (i < word_len)
+  {
+    symbol_index = word[i] - 'a';
     state = automaton->transitions[state][symbol_index].to_state;
-    if (state == NOT_FOUND) {
+    if (state == NOT_FOUND)
       return false;
-    }
+    i++;
   }
-  for (int i = 0; i < automaton->num_states; i++) {
-    if (automaton->accepting_states[i] == state) {
+  i = 0;
+  while (i < automaton->num_states) 
+  {
+    if (automaton->accepting_states[i] == state)
       return true;
-    }
+    i++;
   }
   return false;
 }
 
-// Fonction pour libérer la mémoire allouée pour un automate fini complet
-void free_complete_automaton(struct CompleteAutomaton* automaton) {
-  for (int i = 0; i < automaton->num_states; i++) {
+// Libère la mémoire allouée pour l'automate
+void free_automaton(t_automat *automaton) 
+{
+  int i;
+  
+  i = 0;
+  while (i < automaton->num_states)
+  {
     free(automaton->transitions[i]);
+    i++;
   }
   free(automaton->transitions);
-  free(automaton->accepting_states);
+  //free(automaton->accepting_states);
   free(automaton);
 }

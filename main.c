@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/08 14:05:21 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/09 17:34:09 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,78 +367,81 @@ int main(void) {
 /*
 7. 	Optionally waits for the command to complete and collects its exit 
 	status (see Exit Status).
-*/
+	
 
 int main(void) {
-  int num_states = 5;
-  int num_transitions = 7;
-  int initial_state = 0;
-  int accepting_states[] = {2, 4};
-  //int accepting_states[] = {4, 4};
-  
-  struct CompleteAutomaton* automaton = 
-  	init_complete_automaton(num_states, num_transitions, initial_state, accepting_states);
-  
-  add_transition(automaton, 0, 1, 'a');
-  add_transition(automaton, 0, 2, 'b');
-  //add_transition(automaton, 1, 3, 'c');
-  add_transition(automaton, 2, 2, 'c');
-  add_transition(automaton, 2, 4, 'd');
-  add_transition(automaton, 3, 4, 'e');
-  add_transition(automaton, 3, 3, 'f');
-  add_transition(automaton, 4, 4, 'g');
-  
-  char* word1 = "a";
-  char* word2 = "bcccccccccccccccccd";
-  char* word3 = "c";
-  char* word4 = "d";
-  char* word5 = "e";
-  char* word6 = "f";
-  char* word7 = "g";
-  
-  if (recognize(automaton, word1)) {
-    printf("%s est reconnu par l'automate.\n", word1);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word1);
-  }
-  
-  if (recognize(automaton, word2)) {
-    printf("%s est reconnu par l'automate.\n", word2);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word2);
-  }
 
-  if (recognize(automaton, word3)) {
-    printf("%s est reconnu par l'automate.\n", word3);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word3);
-  }
+	char* word1 = "echo";
+	char* word2 = "echo     ";
+	char* word3 = "echooo";
+	char* word4 = "echo>";
+	char* word5 = "echo<";
 
-  if (recognize(automaton, word4)) {
-    printf("%s est reconnu par l'automate.\n", word4);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word4);
-  }
+	tok_echo(word1);
+	tok_echo(word2);
+	tok_echo(word3);
+	tok_echo(word4);
+	tok_echo(word5);
+	return (0);
+}
 
-  if (recognize(automaton, word5)) {
-    printf("%s est reconnu par l'automate.\n", word5);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word5);
-  }
 
-  if (recognize(automaton, word6)) {
-    printf("%s est reconnu par l'automate.\n", word6);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word6);
-  }
-  
-  if (recognize(automaton, word7)) {
-    printf("%s est reconnu par l'automate.\n", word7);
-  } else {
-    printf("%s n'est pas reconnu par l'automate.\n", word7);
-  }
-  
-  //free_complete_automaton(automaton);
-  
-  return 0;
+*/
+
+static int	tok_echo(char *str)
+{
+	int			n_states;
+	int			n_transit;
+	int			init_st;
+	const int	accept_sts[6] = {0, 1, 2, 3, 4};
+	t_automat	*automaton;
+	char*	echo;
+	
+	echo = "echo";
+	n_states = 5;
+	n_transit = 4;
+	init_st = 0;
+	automaton = init_automat(n_states, n_transit, init_st, accept_sts);
+
+	add_transition(automaton, 0, 1, 'e');
+	add_transition(automaton, 1, 2, 'c');
+	add_transition(automaton, 2, 3, 'h');
+	add_transition(automaton, 3, 4, 'o');
+	//if (recognize(automaton, str) && strcmp(str, echo)) 
+	if (recognize(automaton, str)) 
+		return (1);
+	else 
+		return (0);
+	free_automaton(automaton);
+}
+
+int main(void) {
+	char*	input;
+	char*	exit;
+	
+	exit = "exit";
+	while (1)
+	{
+		while ((input = readline("mini$ "))) 
+		{
+			//if (strcmp(input, exit) == 0)
+			if (strcmp(input, exit) == 0)
+			{
+				ft_exit();
+				return (0);
+			}
+			else if (tok_echo(input) == 1)
+				printf("%s est reconnu par l'automate.\n", input);
+			else
+				ft_err_not_found(input);
+			// permet à l'utilisateur de naviguer avec les flèches haut et bas :
+			add_history(input);
+		}
+		//ft_exit();
+		//free(input);
+		return (0);
+	}
+	ft_exit();
+	free(input);
+	return (0);
 }
