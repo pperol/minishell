@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:57:21 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/09 15:49:02 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/10 13:08:00 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,11 @@ typedef struct s_transit {
 
 // Datas pour un automate fini complet
 typedef struct s_automaton {
-  int       num_states;
-  int       num_transitions;
-  int       initial_state;
-  int       *accepting_states;
-  t_transit ** transitions;
+  t_transit **transitions;
+  size_t    *accepting_states;
+  size_t    num_states;
+  size_t    num_transitions;
+  int    initial_state;
 } t_automat;
 
 /* Utils */
@@ -94,5 +94,9 @@ void	ft_err_not_found(char *input);
 char	*ft_strtok(char *str, const char *delim);
 
 /* Automate */
+t_automat *init_automat(size_t n_states, size_t n_transit, int init_st, size_t* accept_sts);
+void add_transition(t_automat *automaton, size_t from_state, int to_state, char symbol);
+bool recognize(t_automat *automaton, char* word);
+void free_automaton(t_automat *automaton);
 
 #endif

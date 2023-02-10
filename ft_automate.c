@@ -1,11 +1,11 @@
 #include "minishell.h"
 
 // Initialise l'automate fini complet
-t_automat *init_automat(int n_states, int n_transit, int init_st, int* accept_sts)
+t_automat *init_automat(size_t n_states, size_t n_transit, int init_st, size_t* accept_sts)
 {
   t_automat *automaton;
-  int       i;
-  int       j;
+  size_t  i;
+  size_t  j;
 
   automaton = (t_automat *)malloc(sizeof(t_automat));
   automaton->num_states = n_states;
@@ -29,7 +29,7 @@ t_automat *init_automat(int n_states, int n_transit, int init_st, int* accept_st
 }
 
 // Ajoute une transition à l'automate
-void add_transition(t_automat *automaton, int from_state, int to_state, char symbol) 
+void add_transition(t_automat *automaton, size_t from_state, int to_state, char symbol) 
 {
   int symbol_index;
 
@@ -41,10 +41,10 @@ void add_transition(t_automat *automaton, int from_state, int to_state, char sym
 // Vérifie si un mot est reconnu par l'automate
 bool recognize(t_automat *automaton, char* word) 
 {
-  int state;
-  int word_len;
-  int symbol_index;
-  int i;
+  int     state;
+  size_t  word_len;
+  int     symbol_index;
+  size_t  i;
 
   state = automaton->initial_state;
   //word_len = ft_strlen(word);
@@ -61,7 +61,7 @@ bool recognize(t_automat *automaton, char* word)
   i = 0;
   while (i < automaton->num_states) 
   {
-    if (automaton->accepting_states[i] == state)
+    if (automaton->accepting_states[i] == (size_t)state)
       return true;
     i++;
   }
@@ -71,7 +71,7 @@ bool recognize(t_automat *automaton, char* word)
 // Libère la mémoire allouée pour l'automate
 void free_automaton(t_automat *automaton) 
 {
-  int i;
+  size_t i;
   
   i = 0;
   while (i < automaton->num_states)

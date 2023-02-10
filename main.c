@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/09 17:34:09 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/10 14:43:11 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ void	ft_err_not_found(char *input)
 }
 
 // fonction qui va stocker la commande dans un char ** :
-
 static char	**split(char *raw_cmd, char *limit)
 {
 	char	*ptr = NULL;
@@ -368,21 +367,6 @@ int main(void) {
 7. 	Optionally waits for the command to complete and collects its exit 
 	status (see Exit Status).
 	
-
-int main(void) {
-
-	char* word1 = "echo";
-	char* word2 = "echo     ";
-	char* word3 = "echooo";
-	char* word4 = "echo>";
-	char* word5 = "echo<";
-
-	tok_echo(word1);
-	tok_echo(word2);
-	tok_echo(word3);
-	tok_echo(word4);
-	tok_echo(word5);
-	return (0);
 }
 
 
@@ -390,29 +374,69 @@ int main(void) {
 
 static int	tok_echo(char *str)
 {
-	int			n_states;
-	int			n_transit;
+	size_t		n_states;
+	size_t		n_transit;
 	int			init_st;
-	const int	accept_sts[6] = {0, 1, 2, 3, 4};
+	size_t		accept_sts[2] = {1, 4};
 	t_automat	*automaton;
-	char*	echo;
+	char*		character;
 	
-	echo = "echo";
+	character = "echo";
 	n_states = 5;
 	n_transit = 4;
 	init_st = 0;
 	automaton = init_automat(n_states, n_transit, init_st, accept_sts);
-
 	add_transition(automaton, 0, 1, 'e');
 	add_transition(automaton, 1, 2, 'c');
 	add_transition(automaton, 2, 3, 'h');
 	add_transition(automaton, 3, 4, 'o');
-	//if (recognize(automaton, str) && strcmp(str, echo)) 
 	if (recognize(automaton, str)) 
 		return (1);
 	else 
 		return (0);
-	free_automaton(automaton);
+}
+
+static int	tok_space(char *str)
+{
+	size_t		n_states;
+	size_t		n_transit;
+	int			init_st;
+	size_t		accept_sts[2] = {1, 1};
+	t_automat	*automaton;
+	char*		character;
+	
+	character = " ";
+	n_states = 2;
+	n_transit = 2;
+	init_st = 0;
+	automaton = init_automat(n_states, n_transit, init_st, accept_sts);
+	add_transition(automaton, 0, 1, ' ');
+	add_transition(automaton, 1, 1, ' ');
+	if (recognize(automaton, str)) 
+		return (1);
+	else 
+		return (0);
+}
+
+static int	tok_pipe(char *str)
+{
+	size_t		n_states;
+	size_t		n_transit;
+	int			init_st;
+	size_t		accept_sts[2] = {0, 1};
+	t_automat	*automaton;
+	char*		character;
+	
+	character = "|";
+	n_states = 2;
+	n_transit = 1;
+	init_st = 0;
+	automaton = init_automat(n_states, n_transit, init_st, accept_sts);
+	add_transition(automaton, 0, 1, '|');
+	if (recognize(automaton, str)) 
+		return (1);
+	else 
+		return (0);
 }
 
 int main(void) {
@@ -431,17 +455,20 @@ int main(void) {
 				return (0);
 			}
 			else if (tok_echo(input) == 1)
-				printf("%s est reconnu par l'automate.\n", input);
+				printf("minishell: \"%s\" is a command\n", input);
+			else if (tok_space(input) == 1)
+				printf("minishell: \"%s\" is a spacer\n", input);
+			else if (tok_pipe(input) == 1)
+				printf("minishell: \"%s\" is a pipe\n", input);
 			else
 				ft_err_not_found(input);
 			// permet à l'utilisateur de naviguer avec les flèches haut et bas :
 			add_history(input);
 		}
-		//ft_exit();
-		//free(input);
+		ft_exit();
+		free(input);
 		return (0);
 	}
-	ft_exit();
-	free(input);
-	return (0);
+	//ft_exit();
+	//free(input);
 }

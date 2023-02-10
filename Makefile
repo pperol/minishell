@@ -6,7 +6,7 @@
 #    By: pperol <pperol@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/02 11:03:01 by pperol            #+#    #+#              #
-#    Updated: 2023/02/07 10:51:17 by pperol           ###   ########.fr        #
+#    Updated: 2023/02/10 13:04:45 by pperol           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,9 @@ CC = clang
 
 INC = minishell.h
 
-CFLAGS = -Weverything
+# CFLAGS = -Weverything
+# CFLAGS = -Werror -Wall -Wextra
+CFLAGS = 
 
 LFLAGS = -lreadline
 
