@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/10 14:43:11 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/11 19:21:50 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,36 +439,43 @@ static int	tok_pipe(char *str)
 		return (0);
 }
 
-int main(void) {
-	char*	input;
-	char*	exit;
+int main(int ac, char **av) {
+	char	*input;
+	char	*exit;
 	
 	exit = "exit";
-	while (1)
+	if (ac > 1)
 	{
-		while ((input = readline("mini$ "))) 
-		{
-			//if (strcmp(input, exit) == 0)
-			if (strcmp(input, exit) == 0)
-			{
-				ft_exit();
-				return (0);
-			}
-			else if (tok_echo(input) == 1)
-				printf("minishell: \"%s\" is a command\n", input);
-			else if (tok_space(input) == 1)
-				printf("minishell: \"%s\" is a spacer\n", input);
-			else if (tok_pipe(input) == 1)
-				printf("minishell: \"%s\" is a pipe\n", input);
-			else
-				ft_err_not_found(input);
-			// permet à l'utilisateur de naviguer avec les flèches haut et bas :
-			add_history(input);
-		}
-		ft_exit();
-		free(input);
-		return (0);
+		printf("minishell: No such arguments\n");
+		(void)av;
+		return (1);
 	}
-	//ft_exit();
-	//free(input);
+	else
+	{
+		while (1)
+		{
+			while ((input = readline("mini$ "))) 
+			{
+				//if (strcmp(input, exit) == 0)
+				if (strcmp(input, exit) == 0)
+				{
+					ft_exit();
+					return (0);
+				}
+				else if (tok_echo(input) == 1)
+					printf("minishell: \"%s\" is a command\n", input);
+				else if (tok_space(input) == 1)
+					printf("minishell: \"%s\" is a spacer\n", input);
+				else if (tok_pipe(input) == 1)
+					printf("minishell: \"%s\" is a pipe\n", input);
+				else
+					ft_err_not_found(input);
+				// permet à l'utilisateur de naviguer avec les flèches haut et bas :
+				add_history(input);
+			}
+			ft_exit();
+			free(input);
+			return (0);
+		}
+	}
 }
