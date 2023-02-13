@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/11 19:21:50 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/13 11:26:17 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,19 +107,22 @@ void	ft_err_not_found(char *input)
 }
 
 // fonction qui va stocker la commande dans un char ** :
-static char	**split(char *raw_cmd, char *limit)
+static char	**ft_split_input(char *raw_cmd, char *spacer)
 {
 	char	*ptr = NULL;
 	char	**cmd = NULL;
 	size_t	idx = 0;
 
 	// split sur les espaces
-	ptr = strtok(raw_cmd, limit);
+	ptr = strtok(raw_cmd, spacer);
+	//ptr = ft_strtok(raw_cmd, spacer);
 
 	while (ptr) {
 		cmd = (char **)realloc(cmd, ((idx + 1) * sizeof(char *)));
 		cmd[idx] = strdup(ptr);
-		ptr = strtok(NULL, limit);
+		//cmd[idx] = ft_strdup(ptr);
+		ptr = strtok(NULL, spacer);
+		//ptr = ft_strtok(NULL, spacer);
 		++idx;
 	}
 	// On alloue un element qu'on met a NULL a la fin du tableau
@@ -139,7 +142,6 @@ static void	free_array(char **array)
 }
 
 // execution :
-
 static void	exec_cmd(char **cmd)
 {
 	pid_t	pid = 0;
@@ -279,7 +281,7 @@ char	*ft_strtok(char *str, const char *delim)
 	while (*str_token && strchr(delim, *str_token))
 		str_token++;
 	//while (token && !ft_strchr(delim, *str_token))
-	while (str_token && !strchr(delim, *str_token))
+	while (*str_token && !strchr(delim, *str_token))
 		str_token++;
 	if (!*str_token)
 		return (NULL);
@@ -442,6 +444,8 @@ static int	tok_pipe(char *str)
 int main(int ac, char **av) {
 	char	*input;
 	char	*exit;
+	char	*cmd;
+	char 	*spacer = " ,.-!;";
 	
 	exit = "exit";
 	if (ac > 1)
@@ -456,6 +460,7 @@ int main(int ac, char **av) {
 		{
 			while ((input = readline("mini$ "))) 
 			{
+				cmd = ft_strtok(input, spacer);
 				//if (strcmp(input, exit) == 0)
 				if (strcmp(input, exit) == 0)
 				{
@@ -463,11 +468,27 @@ int main(int ac, char **av) {
 					return (0);
 				}
 				else if (tok_echo(input) == 1)
-					printf("minishell: \"%s\" is a command\n", input);
+				{
+					//printf("minishell: \"%s\" is a command\n", input);
+					printf ("%s\n", cmd);
+					// On demande le token suivant.
+					cmd = ft_strtok (NULL, spacer);
+				}
 				else if (tok_space(input) == 1)
-					printf("minishell: \"%s\" is a spacer\n", input);
+				{
+					/* printf("minishell: \"%s\" is a spacer\n", input); */
+					printf ("%s\n", cmd);
+					// On demande le token suivant.
+					cmd = ft_strtok (NULL, spacer);
+				}
 				else if (tok_pipe(input) == 1)
 					printf("minishell: \"%s\" is a pipe\n", input);
+				/* else if (cmd) 
+				{
+					printf ("%s\n", cmd);
+					// On demande le token suivant.
+					cmd = ft_strtok (NULL, spacer);
+				} */
 				else
 					ft_err_not_found(input);
 				// permet à l'utilisateur de naviguer avec les flèches haut et bas :
@@ -479,3 +500,5 @@ int main(int ac, char **av) {
 		}
 	}
 }
+
+// bash --posix !!
