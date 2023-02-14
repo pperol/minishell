@@ -6,7 +6,7 @@
 /*   By: pperol <pperol@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 10:56:56 by pperol            #+#    #+#             */
-/*   Updated: 2023/02/13 11:26:17 by pperol           ###   ########.fr       */
+/*   Updated: 2023/02/14 13:42:09 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -441,6 +441,28 @@ static int	tok_pipe(char *str)
 		return (0);
 }
 
+static int	tok_test(char *str)
+{
+	size_t		n_states;
+	size_t		n_transit;
+	int			init_st;
+	size_t		accept_sts[2] = {1, 4};
+	t_automat	*automaton;
+	
+	n_states = 5;
+	n_transit = 4;
+	init_st = 0;
+	automaton = init_automat(n_states, n_transit, init_st, accept_sts);
+	add_transition(automaton, 0, 1, 't');
+	add_transition(automaton, 1, 2, 'e');
+	add_transition(automaton, 2, 3, 's');
+	add_transition(automaton, 3, 4, 't');
+	if (recognize(automaton, str)) 
+		return (1);
+	else 
+		return (0);
+}
+
 int main(int ac, char **av) {
 	char	*input;
 	char	*exit;
@@ -461,7 +483,7 @@ int main(int ac, char **av) {
 			while ((input = readline("mini$ "))) 
 			{
 				cmd = ft_strtok(input, spacer);
-				//if (strcmp(input, exit) == 0)
+				//if (ft_strcmp(input, exit) == 0)
 				if (strcmp(input, exit) == 0)
 				{
 					ft_exit();
@@ -474,13 +496,14 @@ int main(int ac, char **av) {
 					// On demande le token suivant.
 					cmd = ft_strtok (NULL, spacer);
 				}
-				else if (tok_space(input) == 1)
+				/* else if (tok_space(input) == 1)
 				{
-					/* printf("minishell: \"%s\" is a spacer\n", input); */
+					//printf("minishell: \"%s\" is a spacer\n", input); 
 					printf ("%s\n", cmd);
 					// On demande le token suivant.
 					cmd = ft_strtok (NULL, spacer);
-				}
+				} 
+				*/
 				else if (tok_pipe(input) == 1)
 					printf("minishell: \"%s\" is a pipe\n", input);
 				/* else if (cmd) 
@@ -489,6 +512,9 @@ int main(int ac, char **av) {
 					// On demande le token suivant.
 					cmd = ft_strtok (NULL, spacer);
 				} */
+				else if (tok_test(input) == 1 || (tok_space(input) == 1))
+					printf ("%s\n", input);
+					//readline("mini$ ");
 				else
 					ft_err_not_found(input);
 				// permet à l'utilisateur de naviguer avec les flèches haut et bas :
@@ -502,3 +528,43 @@ int main(int ac, char **av) {
 }
 
 // bash --posix !!
+
+/* 
+libft:
+
+// size_t getline(char **lineptr, size_t *n, FILE *stream);
+
+size_t		ft_getline(size_t fd, char **line)
+{
+	char	buff[2];
+	char	*dup;
+	char	*tmp;
+	int		ret;
+
+	dup = ft_strnew(0);
+	while ((ret = read(fd, buff, 1)) > 0)
+	{
+		buff[1] = 0;
+		if (!ft_strcmp(buff, "\n"))
+			break ;
+		tmp = dup;
+		dup = ft_strjoin(dup, buff);
+		ft_strdel(&tmp);
+	}
+	*line = ft_strdup(dup);
+	ft_strdel(&dup);
+	return (ret);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*ptr;
+
+	ptr = (void*)malloc(count * size);
+	if (!ptr)
+		return (NULL);
+	ft_bzero(ptr, count);
+	return (ptr);
+}
+
+ */
