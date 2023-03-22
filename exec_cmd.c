@@ -6,9 +6,25 @@
 /*   By: pperol <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 10:53:17 by pperol            #+#    #+#             */
-/*   Updated: 2023/03/21 10:58:19 by pperol           ###   ########.fr       */
+/*   Updated: 2023/03/22 12:49:15 by pperol           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+int	exec_cd(char **av)
+{
+	int i;
+
+	i = get_next_sep(av);
+	if (i != 2)
+		put_error("cd bad arguments\n");
+	else if (chdir(av[1]) == -1)
+	{
+		put_error("can't cd to ");
+		put_error(av[1]);
+		put_error("\n");
+	}
+	return (i);
+}
 
 void exec_child_process(char **av, char **env, int *prev_pipe, int pipe_next)
 {
